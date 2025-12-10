@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Differ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- jsdiff is now loaded in the worker, but we keep it here for fallback or if needed by other scripts -->
+    <!-- Actually, app.js doesn't use Diff directly anymore, but the worker does. -->
+    <!-- However, the export feature might need it if we didn't embed the worker code properly. -->
+    <!-- But we did embed the worker code which imports it. -->
+    <!-- We can remove it from here to prove we are using the worker, but let's leave it just in case. -->
+</head>
+<body>
+    <div class="container">
+        <!-- Header removed as requested -->
+        <div class="controls">
+            <div class="file-input">
+                <label for="file1">File 1</label>
+                <div class="url-input-group">
+                    <input type="text" id="url1" placeholder="Enter URL or Local Path">
+                    <button id="browse1" class="browse-btn">Browse</button>
+                    <button id="loadUrl1" class="load-btn">Load</button>
+                    <button id="clear1" class="clear-btn">Clear</button>
+                </div>
+            </div>
+            <div class="file-input">
+                <label for="file2">File 2</label>
+                <div class="url-input-group">
+                    <input type="text" id="url2" placeholder="Enter URL or Local Path">
+                    <button id="browse2" class="browse-btn">Browse</button>
+                    <button id="loadUrl2" class="load-btn">Load</button>
+                    <button id="clear2" class="clear-btn">Clear</button>
+                </div>
+            </div>
+            <div class="file-input">
+                <label for="file3">File 3</label>
+                <div class="url-input-group">
+                    <input type="text" id="url3" placeholder="Enter URL or Local Path">
+                    <button id="browse3" class="browse-btn">Browse</button>
+                    <button id="loadUrl3" class="load-btn">Load</button>
+                    <button id="clear3" class="clear-btn">Clear</button>
+                </div>
+            </div>
+            <button id="exportBtn">Export Static Copy</button>
+        </div>
+        <div id="diff-output" class="diff-container"></div>
+    </div>
+
+    <!-- File Browser Modal -->
+    <div id="fileBrowserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Browse Files</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="browser-path" id="browserCurrentPath"></div>
+            <div class="browser-list" id="browserList"></div>
+            <div class="modal-footer">
+                <button id="browserCancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

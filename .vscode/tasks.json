@@ -1,0 +1,60 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Server",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"start"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "none"
+		},
+		{
+			"label": "Run Server",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"start"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "none"
+		},
+		{
+			"label": "Build Exe",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Test Exe",
+			"type": "shell",
+			"command": "built\\text-differ.exe",
+			"args": [
+				"test1.txt",
+				"test2.txt"
+			],
+			"isBackground": false,
+			"group": "test"
+		},
+		{
+			"label": "Test Exe 2",
+			"type": "shell",
+			"command": "built\\text-differ.exe",
+			"args": [
+				"test1.txt",
+				"test2.txt"
+			],
+			"isBackground": false,
+			"group": "test"
+		}
+	]
+}
