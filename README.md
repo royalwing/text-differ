@@ -60,6 +60,20 @@ The executable will be created in the `built/` directory.
 -   **jsdiff**: For computing text differences.
 -   **HTML5/CSS3/JavaScript**: Frontend interface.
 
+## Integration with Perforce (P4V)
+
+You can use `text-differ` as your custom diff tool in Perforce Helix Core.
+
+1.  Open **P4V**.
+2.  Go to **Edit** > **Preferences**.
+3.  Select **Diff** in the sidebar.
+4.  Under **Default Diff Application**, select **Other application**.
+5.  Click **Browse** and select the `p4-diff.bat` file (or `built/text-differ.exe`).
+6.  Ensure the **Arguments** field is set to: `%1 %2`.
+7.  Click **OK**.
+
+Now, when you diff a file in P4V (e.g., "Diff against Have Revision"), it will open in `text-differ`.
+
 ## License
 
 This project is AI-generated and provided as-is.
