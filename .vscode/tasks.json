@@ -64,6 +64,72 @@
 			"isBackground": false,
 			"problemMatcher": [],
 			"group": "none"
+		},
+		{
+			"label": "Build with Local Cache",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"set ELECTRON_BUILDER_CACHE=x:\\Temp\\differ\\cache && npm run dist"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Build with Local Cache Fixed",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"set \"ELECTRON_BUILDER_CACHE=x:\\Temp\\differ\\cache\" && npm run dist"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Clean Cache",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"rmdir /s /q x:\\Temp\\differ\\cache\\winCodeSign && mkdir x:\\Temp\\differ\\cache\\winCodeSign"
+			],
+			"isBackground": false,
+			"group": "clean"
+		},
+		{
+			"label": "Fix Archive",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"rmdir /s /q x:\\Temp\\differ\\cache\\winCodeSign\\147781535 && x:\\Temp\\differ\\node_modules\\7zip-bin\\win\\x64\\7za.exe d x:\\Temp\\differ\\cache\\winCodeSign\\147781535.7z darwin"
+			],
+			"isBackground": false,
+			"group": "fix"
+		},
+		{
+			"label": "Prepare Cache",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"curl -L -o x:\\Temp\\differ\\cache\\winCodeSign\\147781535.7z https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z && x:\\Temp\\differ\\node_modules\\7zip-bin\\win\\x64\\7za.exe d x:\\Temp\\differ\\cache\\winCodeSign\\147781535.7z darwin"
+			],
+			"isBackground": false,
+			"group": "setup"
+		},
+		{
+			"label": "Build Final",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"set \"ELECTRON_BUILDER_CACHE=x:\\Temp\\differ\\cache\" && npm run dist"
+			],
+			"isBackground": false,
+			"group": "build"
 		}
 	]
 }

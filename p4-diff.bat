@@ -4,4 +4,4 @@
 :: Arguments: %*
 
 :: Launch text-differ with the provided files
-"%~dp0dist\win-unpacked\Text Differ.exe" %*
+"%~dp0dist\text-differ.exe" %*

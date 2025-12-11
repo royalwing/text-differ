@@ -14,7 +14,8 @@
     "productName": "Text Differ",
     "win": {
       "target": "portable",
-      "forceCodeSigning": false
+      "forceCodeSigning": false,
+      "artifactName": "text-differ.${ext}"
     },
     "linux": {
       "target": "AppImage"
@@ -41,6 +42,7 @@
     "open": "^8.4.2"
   },
   "devDependencies": {
+    "caxa": "^3.0.1",
     "electron": "^39.2.6",
     "electron-builder": "^26.0.12",
     "pkg": "^5.8.1"
