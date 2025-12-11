@@ -17,6 +17,7 @@
       "forceCodeSigning": false,
       "artifactName": "text-differ.${ext}"
     },
+    "compression": "store",
     "linux": {
       "target": "AppImage"
     },
