@@ -11,7 +11,8 @@ A robust Node.js application for comparing three text files side-by-side. It fea
 -   **File Browser**: Integrated local file browser to easily navigate and select files.
 -   **Drag & Drop**: Drag files directly onto the application window or the executable icon.
 -   **Standalone Executable**: Can be packaged into a single `.exe` file for portable use without installing Node.js.
--   **Static Export**: Export the current comparison state as a single, self-contained HTML file for sharing.
+-   **Screenshot Export**: Generate a full-length screenshot of the comparison (including collapsed sections) and copy it directly to the clipboard.
+-   **Auto Shutdown**: The backend server automatically shuts down when the browser tab is closed.
 -   **Dark Theme**: Designed for comfortable viewing.
 
 ## Installation

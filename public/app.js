@@ -479,63 +479,74 @@ function renderDiff(sectionId, diff) {
     contentDiv.appendChild(table);
 }
 
-exportBtn.addEventListener('click', () => {
-    const htmlContent = document.documentElement.outerHTML;
-    
-    // We need to inject the current file contents and styles/scripts
-    // 1. Get CSS content
-    // 2. Get JS content (this script)
-    // 3. Get Worker content
-    // 4. Embed file contents
-    
-    Promise.all([
-        fetch('style.css').then(r => r.text()),
-        fetch('app.js').then(r => r.text()),
-        fetch('worker.js').then(r => r.text())
-    ]).then(([css, js, workerScript]) => {
-        const data = {
-            date: new Date().toISOString(),
-            contents: fileContents
-        };
+exportBtn.addEventListener('click', async () => {
+    const originalText = exportBtn.textContent;
+    exportBtn.textContent = 'Generating Image...';
+    exportBtn.disabled = true;
 
-        let newHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Differ Export</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <style>
-        ${css}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Text File Comparer (Export)</h1>
-        <div id="diff-output" class="diff-container"></div>
-    </div>
-    <script type="application/json" id="embedded-data">
-        ${JSON.stringify(data)}
-    </script>
-    <script id="worker-code" type="javascript/worker">
-        ${workerScript}
-    </script>
-    <script>
-        ${js}
-    </script>
-</body>
-</html>`;
+    try {
+        const canvas = await html2canvas(diffOutput, {
+            backgroundColor: '#1e1e1e', // Match dark theme background
+            logging: false,
+            scale: 2 // Higher quality
+        });
 
-        const blob = new Blob([newHtml], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'diff-export.html';
-        a.click();
+        canvas.toBlob(async (blob) => {
+            try {
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        'image/png': blob
+                    })
+                ]);
+                
+                // Notify user
+                const notification = document.createElement('div');
+                notification.textContent = 'Diff copied to clipboard!';
+                notification.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: #4caf50;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    z-index: 1000;
+                    animation: fadeOut 3s forwards;
+                `;
+                document.body.appendChild(notification);
+                
+                // Add animation style if not exists
+                if (!document.getElementById('notification-style')) {
+                    const style = document.createElement('style');
+                    style.id = 'notification-style';
+                    style.textContent = `
+                        @keyframes fadeOut {
+                            0% { opacity: 1; }
+                            70% { opacity: 1; }
+                            100% { opacity: 0; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
 
-        URL.revokeObjectURL(url);
-    });
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+
+            } catch (err) {
+                console.error('Failed to write to clipboard:', err);
+                alert('Failed to copy to clipboard. See console for details.');
+            } finally {
+                exportBtn.textContent = originalText;
+                exportBtn.disabled = false;
+            }
+        });
+    } catch (err) {
+        console.error('Screen render failed:', err);
+        alert('Failed to generate image. See console for details.');
+        exportBtn.textContent = originalText;
+        exportBtn.disabled = false;
+    }
 });
 
 // File Browser Logic
