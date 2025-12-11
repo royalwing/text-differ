@@ -15,16 +15,25 @@ process.on('unhandledRejection', (reason, promise) => {
 const app = express();
 const PORT = 3000;
 
-// Parse command line arguments for files
-const initialFiles = process.argv.slice(2).filter(arg => {
-    try {
-        // Remove quotes if present
-        const cleanPath = arg.replace(/^"|"$/g, '');
-        return fs.existsSync(cleanPath) && fs.lstatSync(cleanPath).isFile();
-    } catch (e) {
-        return false;
-    }
-}).map(arg => arg.replace(/^"|"$/g, ''));
+// Function to parse arguments
+function parseArgs(argv) {
+    return argv.slice(2).filter(arg => {
+        try {
+            // Remove quotes if present
+            const cleanPath = arg.replace(/^"|"$/g, '');
+            return fs.existsSync(cleanPath) && fs.lstatSync(cleanPath).isFile();
+        } catch (e) {
+            return false;
+        }
+    }).map(arg => arg.replace(/^"|"$/g, ''));
+}
+
+let initialFiles = [];
+
+// Only parse args immediately if running directly
+if (require.main === module) {
+    initialFiles = parseArgs(process.argv);
+}
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -153,7 +162,21 @@ app.post('/shutdown', (req, res) => {
     }, 100);
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
-    open(`http://localhost:${PORT}/`);
-});
+function startServer(port = PORT, args = process.argv) {
+    if (args && require.main !== module) {
+        initialFiles = parseArgs(args);
+    }
+    return app.listen(port, () => {
+        console.log(`Server running at http://localhost:${port}/`);
+        // Only open browser if running directly
+        if (require.main === module) {
+            open(`http://localhost:${port}/`);
+        }
+    });
+}
+
+if (require.main === module) {
+    startServer();
+}
+
+module.exports = { startServer, app };

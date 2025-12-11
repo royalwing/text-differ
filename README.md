@@ -38,16 +38,17 @@ This will launch the application in your default browser at `http://localhost:30
 
 ### Building the Executable
 
-To create a standalone `.exe` file:
+To create a standalone application (Windows / Linux):
 ```bash
-npm run build
+npm run dist
 ```
-The executable will be created in the `built/` directory.
+The executable will be created in the `dist/win-unpacked/` directory (for Windows).
 
 ### Using the Executable
 
-1.  Run `text-differ.exe` to start the application.
+1.  Run `Text Differ.exe` from the `dist/win-unpacked/` folder.
 2.  **Drag & Drop**: You can drag text files directly onto the `.exe` icon to launch the application with those files pre-loaded.
+3.  **Window Controls**: The application runs in its own window with standard minimize/maximize/close controls.
 3.  **Command Line**:
     ```bash
     text-differ.exe file1.txt file2.txt file3.txt
@@ -55,8 +56,9 @@ The executable will be created in the `built/` directory.
 
 ## Technologies Used
 
+-   **Electron**: For creating the standalone desktop application.
 -   **Node.js** & **Express**: Backend server.
--   **pkg**: For packaging the application into an executable.
+-   **electron-builder**: For packaging the application into an executable.
 -   **jsdiff**: For computing text differences.
 -   **HTML5/CSS3/JavaScript**: Frontend interface.
 
@@ -68,7 +70,8 @@ You can use `text-differ` as your custom diff tool in Perforce Helix Core.
 2.  Go to **Edit** > **Preferences**.
 3.  Select **Diff** in the sidebar.
 4.  Under **Default Diff Application**, select **Other application**.
-5.  Click **Browse** and select the `p4-diff.bat` file (or `built/text-differ.exe`).
+5.  Click **Browse** and select the `p4-diff.bat` file included in this repository.
+    *   *Note: Ensure `p4-diff.bat` points to the correct location of `Text Differ.exe` (default: `dist\win-unpacked\Text Differ.exe`).*
 6.  Ensure the **Arguments** field is set to: `%1 %2`.
 7.  Click **OK**.
 

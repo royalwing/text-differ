@@ -2,11 +2,30 @@
   "name": "text-differ",
   "version": "1.0.0",
   "description": "A Node.js application to compare three text files with a dark theme and static export.",
-  "main": "server.js",
-  "bin": "server.js",
+  "main": "electron-main.js",
   "scripts": {
-    "start": "node server.js",
-    "build": "pkg . --targets node18-win-x64 --output built/text-differ.exe"
+    "start": "electron .",
+    "build:pkg": "pkg . --targets node18-win-x64 --output built/text-differ.exe",
+    "dist": "electron-builder",
+    "pack": "electron-builder --dir"
+  },
+  "build": {
+    "appId": "com.textdiffer.app",
+    "productName": "Text Differ",
+    "win": {
+      "target": "portable",
+      "forceCodeSigning": false
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "files": [
+      "**/*",
+      "!built/*",
+      "!dist/*",
+      "!.git/*",
+      "!.github/*"
+    ]
   },
   "pkg": {
     "scripts": [
@@ -22,6 +41,8 @@
     "open": "^8.4.2"
   },
   "devDependencies": {
+    "electron": "^39.2.6",
+    "electron-builder": "^26.0.12",
     "pkg": "^5.8.1"
   }
 }
