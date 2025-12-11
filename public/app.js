@@ -20,6 +20,13 @@ const fileLabels = [
     document.querySelector('label[for="file3"]')
 ];
 
+const fileInputWrappers = [
+    document.getElementById('file-input-container-0'),
+    document.getElementById('file-input-container-1'),
+    document.getElementById('file-input-container-2')
+];
+const addFileBtn = document.getElementById('add-file-btn');
+
 const diffOutput = document.getElementById('diff-output');
 const exportBtn = document.getElementById('exportBtn');
 
@@ -174,15 +181,15 @@ function preventDefaults(e) {
     e.stopPropagation();
 }
 
-function handleDrop(e, index) {
+function handleDrop(e, startIndex) {
     const dt = e.dataTransfer;
     
     // 1. Check for dropped URL/Text first
     const droppedUrl = dt.getData('text/uri-list') || dt.getData('text/plain');
     if (droppedUrl && droppedUrl.trim()) {
-        if (urlInputs[index]) {
-            urlInputs[index].value = droppedUrl.trim();
-            loadButtons[index].click();
+        if (urlInputs[startIndex]) {
+            urlInputs[startIndex].value = droppedUrl.trim();
+            loadButtons[startIndex].click();
         }
         return;
     }
@@ -190,31 +197,40 @@ function handleDrop(e, index) {
     // 2. Check for dropped Files
     const files = dt.files;
     if (files.length > 0) {
-        const file = files[0];
-        
-        // Try to get path if available (Electron/some configs)
-        // Note: Standard browsers do not expose full path for security.
-        // If file.path is available and looks like a full path (contains separators), use it.
-        if (file.path && (file.path.includes('/') || file.path.includes('\\'))) {
-            if (urlInputs[index]) {
-                urlInputs[index].value = file.path;
-                // Trigger load button to fetch via backend
-                loadButtons[index].click();
-            }
-        } else {
-            // Fallback: We only have the file object (bytes) and name.
-            // We must read client-side.
-            if (urlInputs[index]) {
-                urlInputs[index].value = file.name; // Just for display
-            }
+        // Iterate through dropped files and available slots
+        for (let i = 0; i < files.length; i++) {
+            const targetIndex = startIndex + i;
             
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                fileContents[index] = event.target.result;
-                updateDiffs();
-                // We don't save state here because we might not have a persistent path
-            };
-            reader.readAsText(file);
+            // Stop if we run out of slots
+            if (targetIndex >= urlInputs.length) break;
+            
+            const file = files[i];
+            
+            // Try to get path if available (Electron/some configs)
+            // Note: Standard browsers do not expose full path for security.
+            // If file.path is available and looks like a full path (contains separators), use it.
+            if (file.path && (file.path.includes('/') || file.path.includes('\\'))) {
+                if (urlInputs[targetIndex]) {
+                    urlInputs[targetIndex].value = file.path;
+                    // Trigger load button to fetch via backend
+                    loadButtons[targetIndex].click();
+                }
+            } else {
+                // Fallback: We only have the file object (bytes) and name.
+                // We must read client-side.
+                if (urlInputs[targetIndex]) {
+                    urlInputs[targetIndex].value = file.name; // Just for display
+                }
+                
+                const reader = new FileReader();
+                const currentIndex = targetIndex;
+                reader.onload = (event) => {
+                    fileContents[currentIndex] = event.target.result;
+                    updateDiffs();
+                    // We don't save state here because we might not have a persistent path
+                };
+                reader.readAsText(file);
+            }
         }
     }
 }
@@ -274,6 +290,8 @@ function updateDiffs() {
     names.forEach((name, i) => {
         if (fileLabels[i]) fileLabels[i].textContent = name;
     });
+
+    updateUI();
 
     if (fileContents.every(c => !c)) return;
 
@@ -708,6 +726,69 @@ function selectFile(path) {
         saveState();
     }
 }
+
+function updateUI() {
+    let firstEmptyIndex = -1;
+    for (let i = 0; i < 3; i++) {
+        const hasValue = urlInputs[i].value.trim() !== '';
+        
+        if (hasValue) {
+            fileInputWrappers[i].classList.remove('hidden');
+        } else {
+            fileInputWrappers[i].classList.add('hidden');
+        }
+
+        if (!hasValue && firstEmptyIndex === -1) {
+            firstEmptyIndex = i;
+        }
+    }
+
+    // Manage Add Button Visibility
+    if (addFileBtn) {
+        const allFilled = firstEmptyIndex === -1;
+        if (allFilled) {
+            addFileBtn.classList.add('hidden');
+        } else {
+            addFileBtn.classList.remove('hidden');
+        }
+    }
+}
+
+// Add File Button Logic
+if (addFileBtn) {
+    addFileBtn.addEventListener('click', () => {
+        // Find first empty slot
+        const emptyIndex = urlInputs.findIndex(input => !input.value.trim());
+        if (emptyIndex !== -1) {
+            fileInputWrappers[emptyIndex].classList.remove('hidden');
+            
+            // Trigger click on the browse button for that index
+            const browseBtn = document.getElementById(`browse${emptyIndex + 1}`);
+            if (browseBtn) browseBtn.click();
+        }
+    });
+
+    // Drag and Drop for Add Button
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        addFileBtn.addEventListener(eventName, preventDefaults, false);
+    });
+
+    addFileBtn.addEventListener('dragenter', () => addFileBtn.classList.add('drag-over'));
+    addFileBtn.addEventListener('dragover', () => addFileBtn.classList.add('drag-over'));
+    addFileBtn.addEventListener('dragleave', () => addFileBtn.classList.remove('drag-over'));
+    
+    addFileBtn.addEventListener('drop', (e) => {
+        addFileBtn.classList.remove('drag-over');
+        // Find first empty slot
+        const emptyIndex = urlInputs.findIndex(input => !input.value.trim());
+        if (emptyIndex !== -1) {
+            handleDrop(e, emptyIndex);
+        }
+    });
+}
+
+// Initial UI update
+updateUI();
 
 // Shutdown server when page is closed
 window.addEventListener('beforeunload', () => {

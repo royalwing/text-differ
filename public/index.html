@@ -18,34 +18,41 @@
     <div class="container">
         <!-- Header removed as requested -->
         <div class="controls">
-            <div class="file-input">
-                <label for="file1">File 1</label>
-                <div class="url-input-group">
-                    <input type="text" id="url1" placeholder="Enter URL or Local Path">
-                    <button id="browse1" class="browse-btn">Browse</button>
-                    <button id="loadUrl1" class="load-btn">Load</button>
-                    <button id="clear1" class="clear-btn">Clear</button>
+            <div class="file-inputs-wrapper">
+                <div class="file-input" id="file-input-container-0">
+                    <label for="file1">File 1</label>
+                    <div class="url-input-group">
+                        <input type="text" id="url1" placeholder="Enter URL or Local Path">
+                        <button id="browse1" class="browse-btn">Browse</button>
+                        <button id="loadUrl1" class="load-btn">Load</button>
+                        <button id="clear1" class="clear-btn">Clear</button>
+                    </div>
+                </div>
+                <div class="file-input hidden" id="file-input-container-1">
+                    <label for="file2">File 2</label>
+                    <div class="url-input-group">
+                        <input type="text" id="url2" placeholder="Enter URL or Local Path">
+                        <button id="browse2" class="browse-btn">Browse</button>
+                        <button id="loadUrl2" class="load-btn">Load</button>
+                        <button id="clear2" class="clear-btn">Clear</button>
+                    </div>
+                </div>
+                <div class="file-input hidden" id="file-input-container-2">
+                    <label for="file3">File 3</label>
+                    <div class="url-input-group">
+                        <input type="text" id="url3" placeholder="Enter URL or Local Path">
+                        <button id="browse3" class="browse-btn">Browse</button>
+                        <button id="loadUrl3" class="load-btn">Load</button>
+                        <button id="clear3" class="clear-btn">Clear</button>
+                    </div>
                 </div>
             </div>
-            <div class="file-input">
-                <label for="file2">File 2</label>
-                <div class="url-input-group">
-                    <input type="text" id="url2" placeholder="Enter URL or Local Path">
-                    <button id="browse2" class="browse-btn">Browse</button>
-                    <button id="loadUrl2" class="load-btn">Load</button>
-                    <button id="clear2" class="clear-btn">Clear</button>
-                </div>
+            
+            <div id="add-file-btn" class="add-file-zone">
+                <span>+ Add File (Click or Drop)</span>
             </div>
-            <div class="file-input">
-                <label for="file3">File 3</label>
-                <div class="url-input-group">
-                    <input type="text" id="url3" placeholder="Enter URL or Local Path">
-                    <button id="browse3" class="browse-btn">Browse</button>
-                    <button id="loadUrl3" class="load-btn">Load</button>
-                    <button id="clear3" class="clear-btn">Clear</button>
-                </div>
-            </div>
-            <button id="exportBtn">Export Static Copy</button>
+
+            <button id="exportBtn">Screenshot Export</button>
         </div>
         <div id="diff-output" class="diff-container"></div>
     </div>
