@@ -3,6 +3,57 @@ const urlInputs = [
     document.getElementById('url2'),
     document.getElementById('url3')
 ];
+
+// Localization Logic
+let currentLocale = 'en';
+
+function detectLocale() {
+    // 1. Check URL parameter (passed from Electron main process)
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('lang')) {
+        const lang = params.get('lang');
+        if (lang.startsWith('uk')) return 'uk';
+        // If lang is provided but not uk, we can default to en or check other supported langs
+        // For now, we only support en and uk.
+        return 'en'; 
+    }
+
+    // 2. Fallback to browser detection
+    const lang = navigator.language || navigator.userLanguage;
+    if (lang.startsWith('uk')) return 'uk';
+    return 'en';
+}
+
+function t(key) {
+    if (locales[currentLocale] && locales[currentLocale][key]) {
+        return locales[currentLocale][key];
+    }
+    return key; // Fallback
+}
+
+function applyTranslations() {
+    currentLocale = detectLocale();
+    document.documentElement.lang = currentLocale;
+    
+    // Update title
+    document.title = t('title');
+
+    // Update elements with data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+    });
+
+    // Update placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.placeholder = t(key);
+    });
+}
+
+// Apply translations immediately
+applyTranslations();
+
 const loadButtons = [
     document.getElementById('loadUrl1'),
     document.getElementById('loadUrl2'),
@@ -108,7 +159,7 @@ if (embeddedDataElement) {
         document.querySelector('.controls').style.display = 'none';
         // Add a header saying this is an export
         const header = document.createElement('h2');
-        header.textContent = `Exported on ${new Date(embeddedData.date).toLocaleString()}`;
+        header.textContent = `${t('exportedOn')} ${new Date(embeddedData.date).toLocaleString()}`;
         header.style.textAlign = 'center';
         document.querySelector('.container').insertBefore(header, document.querySelector('.controls'));
         
@@ -252,7 +303,7 @@ loadButtons.forEach((btn, index) => {
                 })
                 .catch(error => {
                     console.error('Error fetching URL:', error);
-                    alert('Failed to fetch URL. Check console for details.');
+                    alert(t('fetchFailed'));
                 });
         }
     });
@@ -284,7 +335,7 @@ if (!embeddedDataElement) {
 function updateDiffs() {
     diffOutput.innerHTML = '';
 
-    const names = urlInputs.map((input, i) => getFileName(input.value) || `File ${i + 1}`);
+    const names = urlInputs.map((input, i) => getFileName(input.value) || t(`file${i + 1}`));
 
     // Update labels in UI
     names.forEach((name, i) => {
@@ -323,12 +374,21 @@ function requestDiff(title, text1, text2) {
 
     const header = document.createElement('div');
     header.className = 'diff-header';
-    header.textContent = title + ' (Calculating...)';
+    header.textContent = title + t('calculating');
     section.appendChild(header);
 
     const contentDiv = document.createElement('div');
     contentDiv.className = 'diff-content';
-    contentDiv.textContent = 'Loading...';
+    
+    // Add processing loader
+    const loader = document.createElement('div');
+    loader.className = 'processing-loader';
+    loader.innerHTML = `
+        <div class="spinner"></div>
+        <span>${t('loading')}</span>
+    `;
+    contentDiv.appendChild(loader);
+    
     section.appendChild(contentDiv);
 
     diffOutput.appendChild(section);
@@ -354,7 +414,7 @@ function renderDiff(sectionId, diff) {
     if (!section) return;
 
     const header = section.querySelector('.diff-header');
-    header.textContent = header.textContent.replace(' (Calculating...)', '');
+    header.textContent = header.textContent.replace(t('calculating'), '');
 
     const contentDiv = section.querySelector('.diff-content');
     contentDiv.innerHTML = ''; // Clear loading text
@@ -433,7 +493,7 @@ function renderDiff(sectionId, diff) {
                 container.style.alignItems = 'center';
 
                 const text = document.createElement('span');
-                text.textContent = `${count} hidden lines`;
+                text.textContent = `${count} ${t('hiddenLines')}`;
                 text.style.marginRight = '10px';
                 text.style.color = '#858585';
                 container.appendChild(text);
@@ -459,7 +519,7 @@ function renderDiff(sectionId, diff) {
                 // Show All
                 const btnAll = document.createElement('button');
                 btnAll.className = 'expand-btn';
-                btnAll.textContent = 'Show All';
+                btnAll.textContent = t('showAll');
                 btnAll.onclick = () => {
                     const fragment = document.createDocumentFragment();
                     hiddenRowsData.forEach(data => {
@@ -520,7 +580,7 @@ function renderDiff(sectionId, diff) {
 
 exportBtn.addEventListener('click', async () => {
     const originalText = exportBtn.textContent;
-    exportBtn.textContent = 'Generating Image...';
+    exportBtn.textContent = t('generatingImage');
     exportBtn.disabled = true;
 
     try {
@@ -538,51 +598,28 @@ exportBtn.addEventListener('click', async () => {
                     })
                 ]);
                 
-                // Notify user
-                const notification = document.createElement('div');
-                notification.textContent = 'Diff copied to clipboard!';
-                notification.style.cssText = `
-                    position: fixed;
-                    bottom: 20px;
-                    right: 20px;
-                    background: #4caf50;
-                    color: white;
-                    padding: 10px 20px;
-                    border-radius: 4px;
-                    z-index: 1000;
-                    animation: fadeOut 3s forwards;
-                `;
-                document.body.appendChild(notification);
+                // Notify user via button animation
+                exportBtn.textContent = t('diffCopied');
+                exportBtn.style.backgroundColor = '#4caf50';
+                exportBtn.style.color = 'white';
                 
-                // Add animation style if not exists
-                if (!document.getElementById('notification-style')) {
-                    const style = document.createElement('style');
-                    style.id = 'notification-style';
-                    style.textContent = `
-                        @keyframes fadeOut {
-                            0% { opacity: 1; }
-                            70% { opacity: 1; }
-                            100% { opacity: 0; }
-                        }
-                    `;
-                    document.head.appendChild(style);
-                }
-
                 setTimeout(() => {
-                    notification.remove();
+                    exportBtn.textContent = originalText;
+                    exportBtn.style.backgroundColor = '';
+                    exportBtn.style.color = '';
+                    exportBtn.disabled = false;
                 }, 3000);
 
             } catch (err) {
                 console.error('Failed to write to clipboard:', err);
-                alert('Failed to copy to clipboard. See console for details.');
-            } finally {
+                alert(t('copyFailed'));
                 exportBtn.textContent = originalText;
                 exportBtn.disabled = false;
             }
         });
     } catch (err) {
         console.error('Screen render failed:', err);
-        alert('Failed to generate image. See console for details.');
+        alert(t('imageGenFailed'));
         exportBtn.textContent = originalText;
         exportBtn.disabled = false;
     }
@@ -621,6 +658,20 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+// Close modal on Escape key
+window.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        if (modal.style.display === 'block') {
+            closeModal();
+        } else {
+            // If no modal is open, close the window (Electron)
+            // We can try window.close(), but Electron might block it for security unless configured.
+            // However, since we are in a standalone window, this is expected behavior.
+            window.close();
+        }
+    }
+});
 
 function openFileBrowser(index) {
     currentBrowserInputIndex = index;
@@ -662,6 +713,7 @@ async function loadDirectory(path) {
 function renderBrowserItems(data) {
     const { currentPath, parentPath, items } = data;
     
+    // Use raw 'Computer' if at root, or the path
     currentPathDisplay.textContent = currentPath || 'Computer';
     browserList.innerHTML = '';
     browserList.scrollTop = 0; // Reset scroll to top
@@ -789,6 +841,16 @@ if (addFileBtn) {
 
 // Initial UI update
 updateUI();
+
+// Hide global loader when everything is ready
+window.addEventListener('load', () => {
+    const loader = document.getElementById('global-loader');
+    if (loader) {
+        setTimeout(() => {
+            loader.classList.add('hidden');
+        }, 500); // Small delay for smooth transition
+    }
+});
 
 // Shutdown server when page is closed
 window.addEventListener('beforeunload', () => {

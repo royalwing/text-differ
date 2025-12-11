@@ -8,12 +8,13 @@ A robust Node.js application for comparing three text files side-by-side. It fea
 
 -   **3-Way Comparison**: Load and compare up to three text files simultaneously.
 -   **Visual Diffs**: Clear, color-coded difference highlighting (additions, deletions).
+-   **Localization**: Automatic language detection (English/Ukrainian) based on system settings.
 -   **File Browser**: Integrated local file browser to easily navigate and select files.
--   **Drag & Drop**: Drag files directly onto the application window or the executable icon.
--   **Standalone Executable**: Can be packaged into a single `.exe` file for portable use without installing Node.js.
--   **Screenshot Export**: Generate a full-length screenshot of the comparison (including collapsed sections) and copy it directly to the clipboard.
--   **Auto Shutdown**: The backend server automatically shuts down when the browser tab is closed.
--   **Dark Theme**: Designed for comfortable viewing.
+-   **Drag & Drop**: Drag files directly onto the application window or the executable icon. Supports multi-file drop.
+-   **Standalone Application**: Runs as a native desktop application (Electron) with standard window controls.
+-   **Screenshot Export**: Generate a full-length screenshot of the comparison and copy it directly to the clipboard.
+-   **Dark Theme**: Designed for comfortable viewing with smooth loading animations.
+-   **Keyboard Shortcuts**: Press `Escape` to close modals or the application window.
 
 ## Installation
 

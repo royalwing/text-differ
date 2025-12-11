@@ -55,6 +55,15 @@
 			],
 			"isBackground": false,
 			"group": "test"
+		},
+		{
+			"label": "Append CSS",
+			"type": "shell",
+			"command": "echo \"Appending CSS\"",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "none"
 		}
 	]
 }

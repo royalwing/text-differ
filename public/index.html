@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
     <title>Text Differ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -15,44 +16,47 @@
     <!-- We can remove it from here to prove we are using the worker, but let's leave it just in case. -->
 </head>
 <body>
+    <div id="global-loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
     <div class="container">
         <!-- Header removed as requested -->
         <div class="controls">
             <div class="file-inputs-wrapper">
                 <div class="file-input" id="file-input-container-0">
-                    <label for="file1">File 1</label>
+                    <label for="file1" data-i18n="file1">File 1</label>
                     <div class="url-input-group">
-                        <input type="text" id="url1" placeholder="Enter URL or Local Path">
-                        <button id="browse1" class="browse-btn">Browse</button>
-                        <button id="loadUrl1" class="load-btn">Load</button>
-                        <button id="clear1" class="clear-btn">Clear</button>
+                        <input type="text" id="url1" placeholder="Enter URL or Local Path" data-i18n-placeholder="placeholder">
+                        <button id="browse1" class="browse-btn" data-i18n="browse">Browse</button>
+                        <button id="loadUrl1" class="load-btn" data-i18n="load">Load</button>
+                        <button id="clear1" class="clear-btn" data-i18n="clear">Clear</button>
                     </div>
                 </div>
                 <div class="file-input hidden" id="file-input-container-1">
-                    <label for="file2">File 2</label>
+                    <label for="file2" data-i18n="file2">File 2</label>
                     <div class="url-input-group">
-                        <input type="text" id="url2" placeholder="Enter URL or Local Path">
-                        <button id="browse2" class="browse-btn">Browse</button>
-                        <button id="loadUrl2" class="load-btn">Load</button>
-                        <button id="clear2" class="clear-btn">Clear</button>
+                        <input type="text" id="url2" placeholder="Enter URL or Local Path" data-i18n-placeholder="placeholder">
+                        <button id="browse2" class="browse-btn" data-i18n="browse">Browse</button>
+                        <button id="loadUrl2" class="load-btn" data-i18n="load">Load</button>
+                        <button id="clear2" class="clear-btn" data-i18n="clear">Clear</button>
                     </div>
                 </div>
                 <div class="file-input hidden" id="file-input-container-2">
-                    <label for="file3">File 3</label>
+                    <label for="file3" data-i18n="file3">File 3</label>
                     <div class="url-input-group">
-                        <input type="text" id="url3" placeholder="Enter URL or Local Path">
-                        <button id="browse3" class="browse-btn">Browse</button>
-                        <button id="loadUrl3" class="load-btn">Load</button>
-                        <button id="clear3" class="clear-btn">Clear</button>
+                        <input type="text" id="url3" placeholder="Enter URL or Local Path" data-i18n-placeholder="placeholder">
+                        <button id="browse3" class="browse-btn" data-i18n="browse">Browse</button>
+                        <button id="loadUrl3" class="load-btn" data-i18n="load">Load</button>
+                        <button id="clear3" class="clear-btn" data-i18n="clear">Clear</button>
                     </div>
                 </div>
             </div>
             
             <div id="add-file-btn" class="add-file-zone">
-                <span>+ Add File (Click or Drop)</span>
+                <span data-i18n="addFile">+ Add File (Click or Drop)</span>
             </div>
 
-            <button id="exportBtn">Screenshot Export</button>
+            <button id="exportBtn" data-i18n="screenshotExport">Screenshot Export</button>
         </div>
         <div id="diff-output" class="diff-container"></div>
     </div>
@@ -61,16 +65,17 @@
     <div id="fileBrowserModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Browse Files</h3>
+                <h3 data-i18n="browseFiles">Browse Files</h3>
                 <span class="close-modal">&times;</span>
             </div>
-            <div class="browser-path" id="browserCurrentPath"></div>
-            <div class="browser-list" id="browserList"></div>
+            <div class="browser-path" id="browserCurrentPath" translate="no"></div>
+            <div class="browser-list" id="browserList" translate="no"></div>
             <div class="modal-footer">
-                <button id="browserCancelBtn">Cancel</button>
+                <button id="browserCancelBtn" data-i18n="cancel">Cancel</button>
             </div>
         </div>
     </div>
+    <script src="locales.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

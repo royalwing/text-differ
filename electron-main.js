@@ -31,7 +31,8 @@ function createWindow() {
   const server = startServer(0, serverArgv);
   const port = server.address().port;
 
-  mainWindow.loadURL(`http://localhost:${port}`);
+  const systemLocale = app.getLocale();
+  mainWindow.loadURL(`http://localhost:${port}?lang=${systemLocale}`);
 
   mainWindow.on('closed', function () {
     mainWindow = null;
