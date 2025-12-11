@@ -14,6 +14,12 @@ const clearButtons = [
     document.getElementById('clear3')
 ];
 
+const fileLabels = [
+    document.querySelector('label[for="file1"]'),
+    document.querySelector('label[for="file2"]'),
+    document.querySelector('label[for="file3"]')
+];
+
 const diffOutput = document.getElementById('diff-output');
 const exportBtn = document.getElementById('exportBtn');
 
@@ -42,6 +48,13 @@ function initWorker() {
 }
 
 initWorker();
+
+function getFileName(path) {
+    if (!path) return null;
+    // Handle Windows and Unix paths
+    const name = path.split(/[/\\]/).pop();
+    return name || path;
+}
 
 // State Management
 function saveState() {
@@ -255,23 +268,30 @@ if (!embeddedDataElement) {
 function updateDiffs() {
     diffOutput.innerHTML = '';
 
+    const names = urlInputs.map((input, i) => getFileName(input.value) || `File ${i + 1}`);
+
+    // Update labels in UI
+    names.forEach((name, i) => {
+        if (fileLabels[i]) fileLabels[i].textContent = name;
+    });
+
     if (fileContents.every(c => !c)) return;
 
     // Diff 1 vs 2
     if (fileContents[0] && fileContents[1]) {
-        requestDiff('File 1 vs File 2', fileContents[0], fileContents[1]);
+        requestDiff(`${names[0]} vs ${names[1]}`, fileContents[0], fileContents[1]);
     }
 
     // Only show comparisons with File 3 if it is present
     if (fileContents[2]) {
         // Diff 2 vs 3
         if (fileContents[1] && fileContents[2]) {
-            requestDiff('File 2 vs File 3', fileContents[1], fileContents[2]);
+            requestDiff(`${names[1]} vs ${names[2]}`, fileContents[1], fileContents[2]);
         }
 
         // Diff 1 vs 3
         if (fileContents[0] && fileContents[2]) {
-            requestDiff('File 1 vs File 3', fileContents[0], fileContents[2]);
+            requestDiff(`${names[0]} vs ${names[2]}`, fileContents[0], fileContents[2]);
         }
     }
 }
@@ -280,7 +300,8 @@ function requestDiff(title, text1, text2) {
     // Create placeholder container
     const section = document.createElement('div');
     section.className = 'diff-section';
-    section.id = `section-${title.replace(/\s+/g, '-')}`;
+    // Sanitize ID
+    section.id = `section-${title.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
 
     const header = document.createElement('div');
     header.className = 'diff-header';
